@@ -6,4 +6,4 @@ Contact: Shawn Salley, Shawn.Salley@usda.gov, Ecological Sites Branch, National 
 
 ## Folders 
 
-1) Point to MUC-ES - siteobsiid to ecological site 
+1) Point to MUC-ES - siteobsiid to ecological site - method used to create ES-point training data
