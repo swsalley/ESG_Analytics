@@ -6,5 +6,6 @@ Contact: Shawn Salley, Shawn.Salley@usda.gov, Ecological Sites Branch, National 
 
 ## Files 
 
-SSURGO_comp-ES_input.R - Ecological Sites by mapunit component 
-SSURGO-ES-to-point.R   - Sitesobs by component ES
+SSURGO_comp-ES_input.R - Ecological Sites by mapunit component.
+
+SSURGO-ES-to-point.R   - Sitesobs by component ES.
