@@ -140,7 +140,21 @@ Site.ES <- rbind(Site.ES, points.taxa.7)  # n = 158088
 Site.ES <- unique(Site.ES) # n = 158088
 #
 
-head(Site.ES) # this is the full ES training data obtained by component associations by siteobsiid
+# Clean to share ####
+
+clean1 <- unique(all.points.ES[,c(8,9,4:5)])
+clean2 <- inner_join(Site.ES, df1 , by = "siteobsiid") #158088
+clean2 <- clean2[,c(1,4,5,3,2)]
+clean2 <- unique(clean2)
+
+write.csv(clean2, "E:/ESG_analytics/Data/component/siteobs_to_comp-es.csv")
+head(clean2) # this is the full ES training data obtained by component associations by siteobsiid
 
 # End ####
+
+siteobsiid, taxonname, latstddeci, longstddec, 
+df1 <- unique(all.points.ES[,c(8,9,4:5)])
+df2 <- inner_join(Site.ES, df1 , by = "siteobsiid") #158088
+
+
 

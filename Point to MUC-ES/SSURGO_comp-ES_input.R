@@ -1,4 +1,4 @@
-# Steps for ES to Component to point.1
+# Steps for ES to Component to Point
 # ESG Analytics, 4/11/2022
 # SSURGO_comp-ES_input.R
 #
