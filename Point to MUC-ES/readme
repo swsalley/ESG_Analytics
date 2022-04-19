@@ -6,4 +6,4 @@ SSURGO-ES-to-point.R - Sitesobs by component ES.
 
 Data:
 
-siteobs_to_comp-es.csv - CSV file - siteobsiid to component ecological site 
+siteobs_to_comp-es.csv - CSV file - siteobsiid to component ecological site (WGS84)
