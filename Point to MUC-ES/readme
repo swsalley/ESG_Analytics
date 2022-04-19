@@ -6,4 +6,4 @@ SSURGO-ES-to-point.R - Sitesobs by component ES.
 
 Data:
 
-siteobs_to_comp-es.csv - CSV file - siteobsiid to component ecological site (WGS84)
+siteobs_to_comp-es.csv - CSV file - siteobsiid to component ecological site (WGS84, 2021-V4 gNATSGO, 2021 pedon snapshot)
