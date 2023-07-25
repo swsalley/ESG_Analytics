@@ -10,3 +10,7 @@ Contact: Shawn Salley, Shawn.Salley@usda.gov, Ecological Sites Branch, National 
 2) Clustering - clustering code
 3) Data_Pipeline - soil pedon data cleaning code
 4) EcoRegionClusters - clustering by EPA Ecorgion L3
+
+## Soil Groups
+EcoRegionClusters folder contains model outputs by EPS Ecoregion Level 3. 
+
