@@ -14,4 +14,4 @@ Contact: Shawn Salley, Shawn.Salley@usda.gov, Ecological Sites Branch, National 
 ## Soil Groups
 [EcoRegionClusters](https://github.com/swsalley/ESG_Analytics/tree/main/EcoRegionClusters) folder contains model outputs by EPS Ecoregion Level 3. 
 
-![https://github.com/swsalley/ESG_Analytics/Map.PNG](https://github.com/swsalley/ESG_Analytics/blob/main/Map.PNG?raw=true)
+![https://github.com/swsalley/ESG_Analytics/Map1.PNG](https://github.com/swsalley/ESG_Analytics/blob/main/Map1.PNG?raw=true)
