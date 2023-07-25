@@ -1,0 +1,29 @@
+---
+title: "PART 4 - Data Pipeline faster"
+author: "IBM"
+date: "2/23/2022"
+output: html_document
+---
+
+
+```{r}
+library(reticulate)
+use_condaenv("r-reticulate", required = TRUE)
+setwd("C:/Users/Administrator.USDA-ECO-SITES/Documents/USDA_Ecological_Sites/Obj_1_Data_Pipeline_reticulate/")
+
+# First time installation
+
+# conda_install("r-reticulate", "numpy")
+# conda_install("r-reticulate", "pandas")
+# conda_install("r-reticulate", "nltk", pip = TRUE)
+# conda_install("r-reticulate", "scikit-learn")
+# conda_install("r-reticulate", "scipy")
+# conda_install("r-reticulate", "xlrd")
+
+#py_config()
+```
+
+```{r}
+source_python("part4.py") # import python packages, functions and variables
+py_run_file("part4_faster.py") # run the python script of PART Data Pipeline
+```
