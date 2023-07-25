@@ -7,3 +7,6 @@ Contact: Shawn Salley, Shawn.Salley@usda.gov, Ecological Sites Branch, National 
 ## Folders 
 
 1) Point to MUC-ES - siteobsiid to ecological site - method used to create ES-point training data
+2) Clustering - clustering code
+3) Data_Pipeline - soil pedon data cleaning code
+4) EcoRegionClusters - clustering by EPA Ecorgion L3
