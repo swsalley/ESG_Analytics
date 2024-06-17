@@ -7,6 +7,7 @@ library(dplyr); library(tidyr); library(stringr)
 mlras <- read.table("https://edit.jornada.nmsu.edu/services/downloads/esd/geo-unit-list.txt", 
                     sep="\t", quote = "\"", header=TRUE, skip=2)
 sum(mlras$Ecological.site.count)
+sum(unique(mlras$Ecological.site.count))
 
 # api to download all state narratives and from EDIT, 
 sn.all <- NULL
