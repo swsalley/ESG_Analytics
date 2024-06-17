@@ -36,13 +36,16 @@ sn.all$Clean <- str_squish(sn.all$Clean)
 sn.all$Clean <- tolower(sn.all$Clean)
 sn.all <- unique(sn.all)
 
-# frequency
-table(sn.all[sn.all$Plant.community == "",]$Clean) %>% data.frame() %>% arrange(-Freq) %>% head(20)
-
-# pattern without "state" in the name
 sn.all$Short <- gsub("state", "", sn.all$Clean)
+sn.all$Short <- gsub("community", "", sn.all$Short)
 sn.all$Short <- str_squish(sn.all$Short)
-table(sn.all[sn.all$Plant.community == "",]$Short) %>% data.frame() %>% arrange(-Freq) %>% head(50)
+
+# frequency
+table(sn.all[sn.all$Plant.community == "",]$Clean) %>% data.frame() %>% arrange(-Freq) %>% head(30)
+table(sn.all[sn.all$Plant.community == "",]$Short) %>% data.frame() %>% arrange(-Freq) %>% head(30)
+
+table(sn.all[sn.all$Plant.community != "",]$Clean) %>% data.frame() %>% arrange(-Freq) %>% head(30)
+table(sn.all[sn.all$Plant.community != "",]$Short) %>% data.frame() %>% arrange(-Freq) %>% head(30)
 
 # save csv
 write.csv(sn.all, "D:/FY2024/project/EDITnames/state_names20240617.csv")
