@@ -1,0 +1,48 @@
+# EDIT State Names summary
+# 20240617, shawn.salley@usda.gov
+
+library(dplyr); library(tidyr); library(stringr)
+
+# download the list of MLRAs (geocode)
+mlras <- read.table("https://edit.jornada.nmsu.edu/services/downloads/esd/geo-unit-list.txt", 
+                    sep="\t", quote = "\"", header=TRUE, skip=2)
+sum(mlras$Ecological.site.count)
+
+# api to download all state narratives and from EDIT, 
+sn.all <- NULL
+for (i in 1:nrow(mlras)){
+  link <- paste0("https://edit.jornada.nmsu.edu/services/downloads/esd/",
+                 mlras[i,1],"/model-state-narratives.txt") 
+  x.i <- read.table(link, sep="\t", quote = "\"", header=TRUE, skip=2)
+  sn.all <- rbind(sn.all, x.i)
+  print(mlras[i,1])
+}
+
+# write.csv(sn.all, "D:/FY2024/project/EDITnames/state_naratives20240617.csv")
+# sn.all <- read.csv("D:/FY2024/project/EDITnames/state_naratives20240617.csv")
+
+# drop naratives for state name analysis 
+sn.all[is.na(sn.all)] <- ""
+sn.all <- sn.all %>% select(MLRA, Ecological.site.legacy.ID:Name)
+colnames(sn.all)[2:3] <- c( "ES.id","type")
+
+# clean formating for text analysis 
+sn.all$Clean <- gsub("\n", " ", sn.all$Name)
+sn.all$Clean <- gsub(paste(c("[(]", "[)]"), collapse = "|"), " ",  sn.all$Clean)
+sn.all$Clean <- gsub("[][!#$%()*,.:;<=>@^_|~.{}-]", " ", sn.all$Clean)
+sn.all$Clean <- gsub("/", " ", sn.all$Clean)
+sn.all$Clean <- gsub('[0-9]+', '',sn.all$Clean)
+sn.all$Clean <- str_squish(sn.all$Clean)
+sn.all$Clean <- tolower(sn.all$Clean)
+sn.all <- unique(sn.all)
+
+# frequency
+table(sn.all[sn.all$Plant.community == "",]$Clean) %>% data.frame() %>% arrange(-Freq) %>% head(20)
+
+# pattern without "state" in the name
+sn.all$Short <- gsub("state", "", sn.all$Clean)
+sn.all$Short <- str_squish(sn.all$Short)
+table(sn.all[sn.all$Plant.community == "",]$Short) %>% data.frame() %>% arrange(-Freq) %>% head(50)
+
+# save csv
+write.csv(sn.all, "D:/FY2024/project/EDITnames/state_names20240617.csv")
