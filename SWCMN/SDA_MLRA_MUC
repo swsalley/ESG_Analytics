@@ -28,7 +28,7 @@ remove_last_x <- function(string) {
 
 # loop to gather map units and components by mlra
 mlra.mu <- NA
-for (i in 1:nrow(mlras)){ # nrows = 1:267
+for (i in 259:267){ # nrows = 1:267; #1:nrow(mlras)
   print(i)
   mlra.i <- mlras$MLRA[i]
   mlra.i <- remove_last_x(mlra.i)
@@ -36,9 +36,9 @@ for (i in 1:nrow(mlras)){ # nrows = 1:267
   q <- paste0("SELECT 
   -- MLRA, mapunit, area info
   lo.areasymbol AS MLRA_symbol, mo.mukey AS MUKEY, m.musym AS Map_unit_symbol, m.muacres AS Area_acres, 
-    -- component percentages and horizon info
+  -- component percentages and horizon info
   c.cokey, comppct_r, compname, hzdept_r AS hztop, hzdepb_r AS hzbottom, (hzdepb_r - hzdept_r) AS thick,
-    -- horizon data
+  -- horizon data
   sandtotal_r, silttotal_r, claytotal_r, dbthirdbar_r AS db, awc_r, (COALESCE(om_r, 0) / 100.0) * 0.58 AS oc, 
   caco3_r, ph1to1h2o_r, ec_r, cec7_r, ch.chkey,
   -- rock fragment data & handling
@@ -66,9 +66,9 @@ for (i in 1:nrow(mlras)){ # nrows = 1:267
   mlra.co <- mlra.co %>% filter(compname != "Water") # get this out of the way early
   mlra.co <- mlra.co %>% filter(hztop < 100)
   
-  # remove components with combined area less than the upper 80th percentile for MLRA
+  # remove components with combined area less than the upper 75th percentile for MLRA
   mlra.co.80 <- unique(mlra.co[,c(2,5,7,23)]) %>% group_by(compname) %>% summarise(area = sum(co_acres)) %>% 
-    filter(area > quantile(area, probs = 0.75))
+    filter(area > quantile(area, probs = 0.75, na.rm = TRUE)) #75th percentile
   mlra.co <- mlra.co %>% filter(compname %in% mlra.co.80$compname)
   
   # drop family and variant compnames
@@ -79,12 +79,54 @@ for (i in 1:nrow(mlras)){ # nrows = 1:267
   gc()
 }
 
-# trouble shoot errors
+# trouble shoot
+mlras$MLRA[i]
 
-# first error on i = 37; MLRA = "036X"
-  # Caused by error in `quantile.default()`: ! missing values and NaN's not allowed if 'na.rm' is FALSE
+# error on i = 37; MLRA = "036X"; NA's in quantile (to fix, add: na.rm = TRUE)
+df1 <- unique(mlra.co[,c(2,5,7,23)]) %>% group_by(compname) %>% summarise(area = sum(co_acres))
 
+# error on i = 46; MLRA = "043B"; Error :Maximum allowable number of returned records (100000) exceeded.
+# 43A worked, 43B has too many records, skip for now
+
+# store MLRS 1 to 43A (i = 1:45)
+mlra.mu.1.45 <- mlra.mu
+
+# store MLRS 44x to 79x (i = 47:100)
+mlra.mu.47.100 <- mlra.mu
+
+# store (i = 101:150)
+mlra.mu.47.100 <- mlra.mu
+
+# store (i = 101:150)
+mlra.mu.101.150 <- mlra.mu
+
+# error on i = 185, MLRA = "133C", skip for now
+
+# store (i = 151:184)
+mlra.mu.151.184 <- mlra.mu
+
+# store (i = 186:200)
+mlra.mu.186.200 <- mlra.mu
+
+# store (i = 201:250)
+mlra.mu.201.250 <- mlra.mu
+
+# i=251, null, skip for now
+
+# store (i = 252:257)
+mlra.mu.252.257 <- mlra.mu
+
+# i=258, null, skip for now
+
+# store (i = 259:267)
+mlra.mu.259.267 <- mlra.mu
+
+# missing i = 46, 158, 251, 258
+mlras$MLRA[46] # "043B"
+mlras$MLRA[158] # 116A"
+mlras$MLRA[251] # "233X"
+mlras$MLRA[258] # 241X"
+
+# next steps: figure out errors for those mlra; mlra-modal components; NCSP code
 
 # End of SDA data gather
-
-# next, NCSP code
