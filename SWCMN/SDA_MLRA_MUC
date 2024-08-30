@@ -1,0 +1,90 @@
+# Gather map unit Components by MLRA
+# Shawn.Salley@usda.gov
+
+# SCMN map unit component strata selection
+
+# library
+library(aqp)
+library(soilDB)
+library(dplyr)
+
+# download mlra list
+mlras <- read.table("https://edit.jornada.nmsu.edu/services/downloads/esd/geo-unit-list.txt", 
+                    sep="\t", quote = "\"", header=TRUE, skip=2)
+head(mlras)
+
+# funciton to clean mlras (remove zeros and X's)
+remove_last_x <- function(string) {
+  # Remove leading zeros
+  string <- sub("^0+", "", string)
+  
+  # Check if the last character is "X" and remove it if so
+  if (substr(string, nchar(string), nchar(string)) == "X") {
+    return(substr(string, 1, nchar(string) - 1))
+  } else {
+    return(string)
+  }
+}
+
+# loop to gather map units and components by mlra
+mlra.mu <- NA
+for (i in 1:nrow(mlras)){ # nrows = 1:267
+  print(i)
+  mlra.i <- mlras$MLRA[i]
+  mlra.i <- remove_last_x(mlra.i)
+  
+  q <- paste0("SELECT 
+  -- MLRA, mapunit, area info
+  lo.areasymbol AS MLRA_symbol, mo.mukey AS MUKEY, m.musym AS Map_unit_symbol, m.muacres AS Area_acres, 
+    -- component percentages and horizon info
+  c.cokey, comppct_r, compname, hzdept_r AS hztop, hzdepb_r AS hzbottom, (hzdepb_r - hzdept_r) AS thick,
+    -- horizon data
+  sandtotal_r, silttotal_r, claytotal_r, dbthirdbar_r AS db, awc_r, (COALESCE(om_r, 0) / 100.0) * 0.58 AS oc, 
+  caco3_r, ph1to1h2o_r, ec_r, cec7_r, ch.chkey,
+  -- rock fragment data & handling
+  CASE WHEN COALESCE(soil_fraction, 1) < 0.1 THEN 0.1 ELSE COALESCE(soil_fraction, 1) END as soil_fraction
+
+  FROM laoverlap AS lo
+  INNER JOIN muaoverlap AS mo ON mo.lareaovkey = lo.lareaovkey and lo.areasymbol= '", mlra.i, "'
+  AND lo.areatypename='MLRA'
+  INNER JOIN mapunit AS m ON m.mukey = mo.mukey
+  LEFT OUTER JOIN component c ON c.mukey = m.mukey
+  LEFT OUTER JOIN chorizon ch ON ch.cokey = c.cokey
+  LEFT OUTER JOIN (
+    SELECT chkey, (100.0 - sum(COALESCE(fragvol_r, 0))) / 100.0 as soil_fraction
+    FROM chfrags
+    GROUP BY chkey
+    ) as cf ON cf.chkey = ch.chkey
+
+  ORDER BY MUKEY, -comppct_r, hzdept_r") 
+
+  mlra.co <- SDA_query(q)
+
+  # filter and remove minor components
+  mlra.co <- mlra.co %>% filter(Area_acres > 20) # small mapunit areas
+  mlra.co$co_acres <- (as.numeric(mlra.co$Area_acres) * as.numeric(mlra.co$comppct_r) / 100) # component area
+  mlra.co <- mlra.co %>% filter(compname != "Water") # get this out of the way early
+  mlra.co <- mlra.co %>% filter(hztop < 100)
+  
+  # remove components with combined area less than the upper 80th percentile for MLRA
+  mlra.co.80 <- unique(mlra.co[,c(2,5,7,23)]) %>% group_by(compname) %>% summarise(area = sum(co_acres)) %>% 
+    filter(area > quantile(area, probs = 0.75))
+  mlra.co <- mlra.co %>% filter(compname %in% mlra.co.80$compname)
+  
+  # drop family and variant compnames
+  word_to_remove <- c("family", "variant")
+  mlra.co$compname.short <- gsub(paste(word_to_remove,collapse='|'),"",mlra.co$compname)
+  mlra.compname <- mlra.co[,c(1,5,24,23,8:14,22,15:20)]
+  mlra.mu <- rbind(mlra.mu, mlra.compname)
+  gc()
+}
+
+# trouble shoot errors
+
+# first error on i = 37; MLRA = "036X"
+  # Caused by error in `quantile.default()`: ! missing values and NaN's not allowed if 'na.rm' is FALSE
+
+
+# End of SDA data gather
+
+# next, NCSP code
