@@ -1,0 +1,68 @@
+# EDIT data api, 20240924
+# Explore data model and api tools
+
+# libraries 
+library(dplyr)
+
+## download the list of MLRAs (EDIT Geocode) and ES class lists ##
+mlras <- read.table("https://edit.jornada.nmsu.edu/services/downloads/esd/geo-unit-list.txt", 
+                    sep="\t", quote = "\"", header=TRUE, skip=2)
+class_list <- read.table("https://edit.jornada.nmsu.edu/services/downloads/esd/class-list.txt", 
+                         sep="\t", quote = "\"", header=TRUE, skip=2)
+sum(mlras$Ecological.site.count) == nrow(class_list)
+
+# explore
+head(mlras)
+head(class_list[class_list$MLRA == "042B",])
+str(class_list[class_list$MLRA == "042B",])
+
+# subset 
+mlra.42 <- mlras %>% filter(grepl("042", MLRA))
+
+# ES Soil Parent Material
+spm.42 <- NULL
+for (i in 1:nrow(mlra.42)){
+  link <- paste0("https://edit.jornada.nmsu.edu/services/downloads/esd/",
+                 mlra.42[i,1],"/soil-parent-material.txt") 
+  x.i <- read.table(link, sep="\t", quote = "\"", header=TRUE, skip=2)
+  spm.42 <- rbind(spm.42, x.i)
+  print(i)}
+
+# ES Landform
+lf.42 <- NULL
+for (i in 1:nrow(mlra.42)){
+  link <- paste0("https://edit.jornada.nmsu.edu/services/downloads/esd/",
+                 mlra.42[i,1],"/landforms.txt") 
+  x.i <- read.table(link, sep="\t", quote = "\"", header=TRUE, skip=2)
+  lf.42 <- rbind(lf.42, x.i)
+  print(i)}
+
+# explore
+head(spm.42)
+head(lf.42)
+str(spm.42)
+
+# ES transition narratives from EDIT
+tn.42 <- NULL
+for (i in 1:nrow(mlra.42)){
+  link <- paste0("https://edit.jornada.nmsu.edu/services/downloads/esd/",
+                 mlra.42[i,1],"/model-transition-narratives.txt") 
+  x.i <- read.table(link, sep="\t", quote = "\"", header=TRUE, skip=2)
+  tn.42 <- rbind(tn.42, x.i)
+  print(i)}
+
+# ES state state narratives from EDIT, 
+sn.42 <- NULL
+for (i in 1:nrow(mlra.42)){
+  link <- paste0("https://edit.jornada.nmsu.edu/services/downloads/esd/",
+                 mlra.42[i,1],"/model-state-narratives.txt") 
+  x.i <- read.table(link, sep="\t", quote = "\"", header=TRUE, skip=2)
+  sn.42 <- rbind(sn.42, x.i)
+  print(i)}
+
+head(tn.42)
+str(tn.42)
+head(sn.42)
+str(sn.42)
+
+# end #
